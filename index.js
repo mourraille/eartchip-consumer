@@ -1,48 +1,111 @@
 import { connect } from 'mqtt'
 import dotenv from 'dotenv'
 import express from 'express'
+import mongoose from 'mongoose'
+import Log from "./models/Log.js"
+import Hourly from "./models/Hourly.js"
+import Agenda from 'agenda'
+import  Agendash  from 'agendash'
+
+
 const app = express()
 dotenv.config()
 
+//scheduler instantiation
+const agenda = new Agenda({ db: { address: process.env.MONGODB} });
+app.use("/dash",  Agendash(agenda));
 
-var client  = connect(process.env.MQTT_HOST)
+// app.get('/', (req, res) => {
+//     res.send('Hello World!')
+//   })
 
-app.get('/', (req, res) => {
+
+
+//mongoose instantiation
+  mongoose
+  .connect(process.env.MONGODB, { useNewUrlParser: true })
+  .then(() => {
+      app.listen(process.env.EXPRESS_PORT, () => {
+        console.log(`Earthchip v${process.env.APP_V}|  ${new Date()}`)
+        console.log(`Earthchip v${process.env.APP_V}|  API listening at ${process.env.EXPRESS_URL}:${process.env.EXPRESS_PORT}`)
+    })
+  })
+
+
+//Express instantiation
+  app.get('/', (req, res) => {
     res.send('Hello World!')
   })
-  
-  app.listen(process.env.EXPRESS_PORT, () => {
-      console.log(`Earthchip v${process.env.APP_V} |  ${new Date()}`)
-      console.log(`App listening at ${process.env.EXPRESS_URL}:${process.env.EXPRESS_PORT}`)
-  })
+
+//MQTT-consumer instantiation
+ var client = 
+ connect(process.env.MQTT_HOST) 
+  client.on('connect', function () {
+   client.subscribe(['INIT', 'TEMP', 'SOIL', 'HUM'], function (err) {
+       client.publish('INIT', `ACK - ${process.env.MQTT_HOST}`)
+     if (!err) {
+     }
+ })
+ })
+
+ client.on('message', function (topic, message) {
+     var payload
+     switch (topic) {
+        case 'INIT':
+             console.log(`${new Date().toUTCString()}: ${topic}| ${message.toString()}`)
+             break;
+         case 'TEMP':
+             console.log(`${new Date().toUTCString()}: ${topic}| ${message.toString()}`)
+             insert(payload = {characteristic:topic, value:message, timestamp:new Date()})
+             break;
+         case 'SOIL':
+             console.log(`${new Date().toUTCString()}: ${topic}| ${message.toString()}`)
+             insert(payload = {characteristic:topic, value:Number(message), timestamp:new Date()})
+             break;
+         case 'HUM':s
+             console.log(`${new Date().toUTCString()}: ${topic}| ${message.toString()}`)
+             insert(payload = {characteristic:topic, value:message, timestamp:new Date()})
+             break;    
+         default:
+             break;
+     }
+ })
 
 
-client.on('connect', function () {
-  client.subscribe(['init', 'temp', 'soil', 'hum'], function (err) {
-    if (!err) {
-        client.publish('init', `MQTT CONNECTION STABLISHED TO ${process.env.MQTT_HOST} `)
-    } else  {
-        console.log(`MQTT CONNECTION STABLISHED TO ${process.env.MQTT_HOST}`)
+ //Scheduler instantiation
+  async function insert(payload) {
+     const entry = new Log({
+ 		characteristic: payload.characteristic,
+        value: payload.value,
+ 		timestamp: payload.timestamp
+ 	})
+ 	await entry.save()
+ }
+
+ agenda.define("hourly", async (job) => {
+    Log.find({}, function(err, logs) {
+        let avg = 0;
+        if(logs.length>0) { 
+        logs.forEach(log => {
+            if(log.characteristic == "SOIL") {
+                avg +=  log.value
+            }
+        });
+        avg = avg/logs.length
+        console.log(avg)
+        const entry = new Hourly({
+            characteristic: "SOIL",
+            hour_value: avg,
+            hour_timestamp: new Date()
+        })
+         entry.save()
+         Log.collection.drop();
     }
-})
-})
+    });
+});
 
-client.on('message', function (topic, message) {
-    switch (topic) {
-        case 'init':
-            console.log(message.toString())
-            break;
-        case 'temp':
-            console.log(message.toString())
-            break;
-        case 'soil':
-            console.log(message.toString())
-            break;
-        case 'hum':
-            console.log(message.toString())
-            break;    
-        default:
-            break;
-    }
-})
+   (async function () {
+     await agenda.start();
+     await agenda.every("59 * * * *", "hourly");
+   })();
 
