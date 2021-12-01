@@ -1,40 +1,23 @@
 import { connect } from 'mqtt'
 import dotenv from 'dotenv'
-import express from 'express'
 import mongoose from 'mongoose'
 import Log from "./models/Log.js"
 import Hourly from "./models/Hourly.js"
 import Agenda from 'agenda'
-import  Agendash  from 'agendash'
 
-
-const app = express()
 dotenv.config()
 
 //scheduler instantiation
 const agenda = new Agenda({ db: { address: process.env.MONGODB} });
-app.use("/dash",  Agendash(agenda));
-
-// app.get('/', (req, res) => {
-//     res.send('Hello World!')
-//   })
-
-
 
 //mongoose instantiation
   mongoose
   .connect(process.env.MONGODB, { useNewUrlParser: true })
   .then(() => {
-      app.listen(process.env.EXPRESS_PORT, () => {
+      //app.listen(process.env.EXPRESS_PORT, () => {
         console.log(`Earthchip v${process.env.APP_V}|  ${new Date()}`)
         console.log(`Earthchip v${process.env.APP_V}|  API listening at ${process.env.EXPRESS_URL}:${process.env.EXPRESS_PORT}`)
-    })
-  })
-
-
-//Express instantiation
-  app.get('/', (req, res) => {
-    res.send('Hello World!')
+    //})
   })
 
 //MQTT-consumer instantiation
@@ -71,7 +54,6 @@ app.use("/dash",  Agendash(agenda));
      }
  })
 
-
  //Scheduler instantiation
   async function insert(payload) {
      const entry = new Log({
@@ -82,6 +64,7 @@ app.use("/dash",  Agendash(agenda));
  	await entry.save()
  }
 
+ //gotta rework the logic here
  agenda.define("hourly", async (job) => {
     Log.find({}, function(err, logs) {
         let avg = 0;
@@ -104,6 +87,7 @@ app.use("/dash",  Agendash(agenda));
     });
 });
 
+//Job creation and kickoff
    (async function () {
      await agenda.start();
      await agenda.every("59 * * * *", "hourly");
