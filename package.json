@@ -2,13 +2,13 @@
   "name": "mqtt-consumer",
   "version": "1.0.0",
   "description": "mqtt consumer and db agregation service ",
-  "main": "index.js",
+  "main": "mqtt-consumer.js",
   "type": "module",
   "directories": {
     "test": "tests"
   },
   "scripts": {
-    "start": "node index.js"
+    "start": "node mqtt-consumer.js"
   },
   "author": "mourraille",
   "license": "ISC",
