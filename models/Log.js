@@ -9,4 +9,4 @@ const schema = mongoose.Schema({
 	timestamps: { createdAt: 'created_at'}
 })
 
-export default  mongoose.model("Log", schema) 
+export default mongoose.model("Log", schema) 
