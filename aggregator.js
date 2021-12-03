@@ -36,7 +36,7 @@ const agenda = new Agenda({ db: { address: process.env.MONGODB}});
  //Job creation and kickoff
  const startScheduler = async  function  () {
     await agenda.start();
-    await agenda.every("59 * * * *", "hourly");
+    await agenda.every("00 * * * *", "hourly");
   };
 
   export default { hourlyAggregationJob, startScheduler}
