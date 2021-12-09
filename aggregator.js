@@ -10,33 +10,42 @@ const agenda = new Agenda({ db: { address: process.env.MONGODB}});
  //gotta rework the logic here
  const hourlyAggregationJob = function () {
     agenda.define("hourly", async (job) => {
-        Log.find({}, function(err, logs) {
-            let avg = 0;
-            if(logs.length>0) { 
-            logs.forEach(log => {
-                if(log.characteristic == "SOIL") {
-                    avg +=  log.value
-                }
-            });
-            avg = avg/logs.length
-            console.log(avg)
-            const entry = new Hourly({
-                characteristic: "SOIL",
-                hour_value: avg,
-                hour_timestamp: new Date(),
-                log_count: logs.length
-            })
-             entry.save()
-             Log.collection.drop();
-        }
-        });
+        const query = await Log.aggregate(
+            [
+              {
+                $group:
+                  {
+                    _id: "$characteristic",
+                    avgQuantity: { $avg: "$value" }
+                  }
+              }
+            ]
+         ).exec();     
+    var logCount = 0;
+    Log.count({}, function( err, count){
+        logCount = count
+    })
+    hourlyAggregation("SOIL",new Date(),query[1].avgQuantity,logCount) 
+    hourlyAggregation("TEMP",new Date(),query[0].avgQuantity,logCount) 
     });
  }
 
  //Job creation and kickoff
  const startScheduler = async  function  () {
     await agenda.start();
-    await agenda.every("00 * * * *", "hourly");
+    await agenda.every("18 * * * *", "hourly");
   };
 
+
+ async function hourlyAggregation(characteristic,date,avg,logCount) {
+    var entry = new Hourly({
+        characteristic: characteristic,
+        hour_value: avg,
+        hour_timestamp: date,
+        log_count: logCount
+    })
+    entry.save()
+    console("logged:" + characteristic)
+  }
+  
   export default { hourlyAggregationJob, startScheduler}
