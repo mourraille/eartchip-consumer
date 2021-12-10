@@ -1,0 +1,34 @@
+       <h1>Earthchip</h1>
+        <div class="card">
+            <div class="inner-card-title">
+                <h2>Current values</h2>
+            </div>
+            <div class="inner-card">
+            <div class="ellipse">
+                <div class="topic">
+                    {{{home.temp}}}&#176;
+                    <div class="topic-title">Temperature</div>
+                </div>
+            </div>
+            <div class="ellipse">
+                <div class="topic">
+                    {{{home.soil}}}%
+                    <div class="topic-title">Soil Moisture</div>
+                </div>
+            </div>
+        </div>
+        <div class="info-section">Last watered Today at 8:00am </div>
+    </div>
+    <div class="card">
+        <div class="inner-card-title">
+            <h2>Hourly pulse</h2>
+        </div>
+        <div class="inner-card">
+            <div class="chart-container">
+                <canvas id="myChart"></canvas>
+            </div>            
+        </div>
+    </div>
+    <div class="button-water">
+        <div class="button-title">Water now</div>
+    </div>

@@ -2,18 +2,28 @@ import { connect } from 'mqtt'
 import dotenv from 'dotenv'
 import mongoose from 'mongoose'
 import Log from "./models/Log.js"
+import Hourly from "./models/Hourly.js"
 import Aggregator from "./aggregator.js"
+import express from "express"
+import { create } from 'express-handlebars';
 
 dotenv.config()
+const app = express();
+
+const hbs = create({ extname: '.hbs', defaultLayout: "main" });
+app.engine('hbs', hbs.engine);
+app.set('view engine', 'hbs');
+
+
 
 //mongoose instantiation
   mongoose
   .connect(process.env.MONGODB, { useNewUrlParser: true })
   .then(() => {
-      //app.listen(process.env.EXPRESS_PORT, () => {
+      app.listen(process.env.EXPRESS_PORT, () => {
         console.log(`Earthchip v${process.env.APP_V}|  ${new Date()}`)
         console.log(`Earthchip v${process.env.APP_V}|  API listening at ${process.env.EXPRESS_URL}:${process.env.EXPRESS_PORT}`)
-    //})
+    })
   })
 
 //MQTT-consumer instantiation
@@ -63,5 +73,31 @@ dotenv.config()
  Aggregator.hourlyAggregationJob()
  Aggregator.startScheduler()
 
-
-
+//main route render 
+ app.get("/", (req, res) => {
+    let _temp = 0;
+    var _soil = 0;
+     Log.findOne({'characteristic':'TEMP'}, {}, { sort: { 'created_at' : -1 } }, function(err, post) {
+        _temp = post.value;
+        Log.findOne({'characteristic':'SOIL'}, {}, { sort: { 'created_at' : -1 } }, function(err, post) {
+            _soil = post.value
+            Hourly.find({characteristic: "SOIL"}).sort({hour_timestamp:-1}).limit(24).exec(function(err, posts) {
+                var soilValues = []
+                var soilDates = []
+                posts.forEach(post => {
+                    soilValues.push(post.hour_value)
+                    soilDates.push(Date.parse(post.hour_timestamp))
+                });
+                res.render('home', {
+                    home: {
+                        temp: _temp,
+                        soil: _soil
+                    },
+                    soilValues,
+                    soilDates
+                });
+           });
+           
+        })
+      });
+});

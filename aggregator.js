@@ -8,7 +8,7 @@ dotenv.config()
 const agenda = new Agenda({ db: { address: process.env.MONGODB}});
 
  //gotta rework the logic here
- const hourlyAggregationJob = function () {
+ const hourlyAggregationJob = async function () {
     agenda.define("hourly", async (job) => {
         const query = await Log.aggregate(
             [
@@ -25,17 +25,17 @@ const agenda = new Agenda({ db: { address: process.env.MONGODB}});
     Log.count({}, function( err, count){
         logCount = count
     })
-    hourlyAggregation("SOIL",new Date(),query[1].avgQuantity,logCount) 
-    hourlyAggregation("TEMP",new Date(),query[0].avgQuantity,logCount) 
+   await hourlyAggregation("SOIL",new Date(),query[1].avgQuantity,logCount) 
+   await hourlyAggregation("TEMP",new Date(),query[0].avgQuantity,logCount) 
+   Log.collection.drop();
     });
  }
 
  //Job creation and kickoff
  const startScheduler = async  function  () {
     await agenda.start();
-    await agenda.every("18 * * * *", "hourly");
+    await agenda.every("00 * * * *", "hourly");
   };
-
 
  async function hourlyAggregation(characteristic,date,avg,logCount) {
     var entry = new Hourly({
@@ -44,8 +44,7 @@ const agenda = new Agenda({ db: { address: process.env.MONGODB}});
         hour_timestamp: date,
         log_count: logCount
     })
-    entry.save()
-    console("logged:" + characteristic)
+    entry.save() 
   }
   
   export default { hourlyAggregationJob, startScheduler}
