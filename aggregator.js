@@ -9,7 +9,7 @@ const agenda = new Agenda({ db: { address: process.env.MONGODB}});
 
  //gotta rework the logic here
  const hourlyAggregationJob = async function () {
-    agenda.define("hourly", async (job) => {
+   agenda.define("hourly", async (job) => {
         const query = await Log.aggregate(
             [
               {
@@ -20,14 +20,13 @@ const agenda = new Agenda({ db: { address: process.env.MONGODB}});
                   }
               }
             ]
-         ).exec();     
-    var logCount = 0;
-    Log.count({}, function( err, count){
-        logCount = count
-    })
-   await hourlyAggregation("SOIL",new Date(),query[1].avgQuantity,logCount) 
-   await hourlyAggregation("TEMP",new Date(),query[0].avgQuantity,logCount) 
-   Log.collection.drop();
+         ).exec();
+      const count = await Log.countDocuments({});
+      query.forEach(log => {
+         hourlyAggregation(log._id,new Date(),log.avgQuantity,count) 
+       });     
+    
+    await Log.collection.drop();
     });
  }
 
@@ -37,12 +36,12 @@ const agenda = new Agenda({ db: { address: process.env.MONGODB}});
     await agenda.every("00 * * * *", "hourly");
   };
 
- async function hourlyAggregation(characteristic,date,avg,logCount) {
+ async function hourlyAggregation(characteristic,date,avg,count) {
     var entry = new Hourly({
         characteristic: characteristic,
         hour_value: avg,
         hour_timestamp: date,
-        log_count: logCount
+        log_count: count
     })
     entry.save() 
   }

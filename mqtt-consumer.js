@@ -12,8 +12,10 @@ const app = express();
 
 const hbs = create({ extname: '.hbs', defaultLayout: "main" });
 app.engine('hbs', hbs.engine);
-app.set('view engine', 'hbs');
+app.set('view engine', 'hbs'); 
 
+
+app.use(express.static(process.cwd() + '/public'));
 
 
 //mongoose instantiation

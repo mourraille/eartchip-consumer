@@ -1,0 +1,194 @@
+
+@import url(//fonts.googleapis.com/earlyaccess/nats.css);
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@500&display=swap');
+
+body {
+        background: #172e3b;
+}
+
+h1 {
+    margin: 5% auto;
+    text-align: center;
+    justify-content: center;
+    font-family: 'NATS', sans-serif;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 70px;
+    line-height: 120px;
+    color: #FFFFFF;
+    text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+.card {
+        position: relative;
+        margin: 5% auto;
+        width: 700px;
+        height: 330px;
+        background: #1a213b;
+        box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+        border-radius: 15px;        
+}
+
+h2 {
+    position: absolute;
+    text-align: left;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 23px;
+    line-height: 139px;
+    font-family: 'Rubik', sans-serif;
+    margin-top:-26;
+    margin-left:26;
+    color: #FFFFFF;
+    text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+.ellipse {
+    position: relative;
+    margin-top: 15%;
+    display: flex;
+    width: 150px;
+    height: 105px;
+    background: rgba(196, 196, 196, 0.55);
+    border-radius: 15px;
+}
+.inner-card {
+    position: relative;
+    margin: 0 auto;
+    width: 100%;
+    height: 35%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.topic {
+    position: relative;
+    margin: 12% auto;
+    text-align: center;
+    font-style: normal;
+    font-size: 32px;
+    font-family: 'Rubik', sans-serif;
+    color: #FFFFFF;
+    text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+.topic-title {
+    margin: 0 auto;
+    position: relative;
+    text-align: center;
+    font-style: normal;
+    font-size: 18px;
+    color: #FFFFFF;
+    font-family: 'NATS', sans-serif;
+}
+
+.info-section {
+    margin: 22% auto;
+    position: relative;
+    text-align: center;
+    font-style: normal;
+    font-size: 14px;
+    color: #FFFFFF;
+    font-family: 'Rubik', sans-serif;
+}
+
+.button-water {
+    position: relative;
+    width: 275px;
+    height: 42px;
+    margin: 5% auto;
+    background: #706ECF;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 15px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly; 
+}
+.chart-container {
+     margin-top: 7%;
+     position: absolute; 
+     height:50%; 
+     width:80%;
+}
+
+.button-title {
+    position: relative;
+    text-align: left;
+    font-style: normal;
+    margin-top: -18%;
+    font-weight: bold;
+    font-size: 23px;
+    line-height: 139px;
+    font-family: 'Rubik', sans-serif;
+    color: #FFFFFF;
+    text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+@media screen and (max-width: 700px) {
+.card {
+        width: 90%;
+        height: 270px;   
+        margin-top: 15%;  
+}
+
+.inner-card {
+    position: relative;
+    margin: 0 auto;
+    width: 100%;
+    height: 35%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+.inner-card-title {
+    position: relative;
+    margin-top: -8%;
+    margin-left: 10%;
+    margin-bottom: 15%;
+    width: 100%;
+    height: 10%;
+}
+
+.topic {
+    margin: 12% auto;
+    font-size: 26px;
+}
+
+.topic-title {
+    margin: 0 auto;
+    font-size: 14px;
+}
+.chart-container {
+     height:80%; 
+     width:80%;
+     margin-top: 3%
+}
+.info-section {
+    margin: 10% auto;
+    font-size: 14px;
+}
+
+
+h2 {
+    margin-top:-26;
+    margin-left:-20;
+}
+
+.ellipse {
+    position: relative;
+    margin-top: 2%;
+    display: flex;
+    width: 100px;
+    height: 70px;
+    background: rgba(196, 196, 196, 0.55);
+    border-radius: 15px;
+}
+
+.button-water {
+    margin: 18% auto;
+}
+
+.button-title {
+    margin-top: -18%;
+}
+}
