@@ -4,7 +4,6 @@ import Hourly from "./models/Hourly.js"
 import dotenv from 'dotenv'
 dotenv.config()
 
-
 const agenda = new Agenda({ db: { address: process.env.MONGODB}});
 
  //gotta rework the logic here

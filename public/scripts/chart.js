@@ -1,4 +1,4 @@
-function renderChart (arr1, arr2) {
+function renderChart (arr1, arr2, name) {
     const values = arr1; 
     const dates = arr2; 
 
@@ -34,17 +34,28 @@ function renderChart (arr1, arr2) {
                      }
                  },
                  y: {
+                     
                      grid: {
                          display: false
                      },
-                     maxTicksLimit: 6
+                     
+                        suggestedMin: 45
+                    
                  }
              }
          }
      };
-     const myChart = new Chart(
-         document.getElementById('myChart'),
-         config
-     );
-     
+     chartProducer(name,config)
+}
+
+function chartProducer(name, config) {
+    if (name == "tempchart") {
+        config.options.scales.y.suggestedMin = 14
+        config.data.datasets[0].label = "Temp"
+    }
+    const myChart = new Chart(
+        document.getElementById(name),
+        config
+    );
+
 }

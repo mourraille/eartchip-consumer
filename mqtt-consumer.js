@@ -14,9 +14,7 @@ const hbs = create({ extname: '.hbs', defaultLayout: "main" });
 app.engine('hbs', hbs.engine);
 app.set('view engine', 'hbs'); 
 
-
 app.use(express.static(process.cwd() + '/public'));
-
 
 //mongoose instantiation
   mongoose
@@ -90,16 +88,25 @@ app.use(express.static(process.cwd() + '/public'));
                     soilValues.push(post.hour_value)
                     soilDates.push(Date.parse(post.hour_timestamp))
                 });
-                res.render('home', {
-                    home: {
-                        temp: _temp,
-                        soil: _soil
-                    },
-                    soilValues,
-                    soilDates
-                });
+                Hourly.find({characteristic: "TEMP"}).sort({hour_timestamp:-1}).limit(24).exec(function(err, temps) {
+                    var tempValues = []
+                    var tempDates = []
+                    temps.forEach(temp => {
+                        tempValues.push(temp.hour_value)
+                        tempDates.push(Date.parse(temp.hour_timestamp))
+                    });
+                    res.render('home', {
+                        home: { 
+                            temp: _temp,
+                            soil: _soil
+                        },
+                        soilValues,
+                        soilDates,
+                        tempValues,
+                        tempDates
+                    });
+                })
            });
-           
         })
       });
 });
