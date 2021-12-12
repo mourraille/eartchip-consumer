@@ -5,9 +5,12 @@ services:
     build: .
     ports:
       - 3010:3010
+
   mongo:
     image: mongo
     ports:
       - 27017:27017
     volumes:
       - mongodb:/data/db
+volumes:
+ mongodb:
