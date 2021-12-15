@@ -17,7 +17,7 @@ app.set('view engine', 'hbs');
 app.use(express.static(process.cwd() + '/public'));
 
 //mongoose instantiation
-  mongoose
+  await mongoose
   .connect(process.env.MONGODB, { useNewUrlParser: true })
   .then(() => {
       app.listen(process.env.EXPRESS_PORT, () => {

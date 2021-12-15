@@ -19,6 +19,7 @@
     "express": "^4.17.1",
     "express-handlebars": "^6.0.2",
     "mongoose": "^6.0.12",
-    "mqtt": "^4.2.8"
+    "mqtt": "^4.2.8",
+    "nodemon": "^2.0.15"
   }
 }
