@@ -1,11 +1,9 @@
 version: '3'
 services:
-       earthchip:
+       earthchip: 
            restart: always
            build: .
+           image: 'earthchip-mqtt'
+           container_name: 'earthchip'         
            ports:
              - "3010:3010"
-networks:
-   default:
-    external:
-       name: sandboxnet
