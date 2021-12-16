@@ -1,0 +1,14 @@
+{
+    "name": "Earthchip",
+    "short_name": "Earthchip",
+    "icons": [
+        {
+            "src": "/android-chrome-144x144.png",
+            "sizes": "144x144",
+            "type": "image/png"
+        }
+    ],
+    "theme_color": "#172e3b",
+    "background_color": "#172e3b",
+    "display": "standalone"
+}
