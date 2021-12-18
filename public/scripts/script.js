@@ -59,14 +59,13 @@ function chartProducer(name, config) {
     );
 }
 
-
 function getPulse()
 {
-    var req = new XMLHttpRequest();
-    req.open( "GET", "https://earthchip.mourraille.site/pulse", false ); // false for synchronous request
-    req.send(null)
-    document.getElementById("soil-value").innerHTML = JSON.parse(req.responseText).soil + "%"
-    document.getElementById("temp-value").innerHTML = JSON.parse(req.responseText).temp + '&#176;'
+   $.get("https://earthchip.mourraille.site/pulse", function(data, status){
+    document.getElementById("soil-value").innerHTML = data.soil + "%"
+    document.getElementById("temp-value").innerHTML = data.temp + '&#176;'
+  });
+
 }
 
 setInterval(getPulse, 1000);
