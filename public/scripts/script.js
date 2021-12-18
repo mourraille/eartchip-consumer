@@ -62,7 +62,7 @@ function chartProducer(name, config) {
 function getPulse()
 {
     var req = new XMLHttpRequest();
-    req.open( "GET", "https://earthchip.mourraille.site/pulse", false ); // false for synchronous request
+    req.open( "GET", "https://earthchip.mourraille.site/pulse", true ); // false for synchronous request
     req.send(null)
     document.getElementById("soil-value").innerHTML = JSON.parse(req.responseText).soil + "%"
     document.getElementById("temp-value").innerHTML = JSON.parse(req.responseText).temp + '&#176;'
