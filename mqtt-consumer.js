@@ -37,6 +37,7 @@ app.use(express.static(process.cwd() + '/public'));
  })
  })
 
+ //MQTT-consumer parser to mongo documents
  client.on('message', function (topic, message) {
      var payload
      switch (topic) {
@@ -60,7 +61,7 @@ app.use(express.static(process.cwd() + '/public'));
      }
  })
 
- //Scheduler instantiation
+ //Aggregator instantiation
   async function insert(payload) {
      const entry = new Log({
  		characteristic: payload.characteristic,
@@ -69,9 +70,26 @@ app.use(express.static(process.cwd() + '/public'));
  	})
  	await entry.save()
  }
-
  Aggregator.hourlyAggregationJob()
  Aggregator.startScheduler()
+
+
+ //pulse render 
+ app.get("/pulse", (req, res) => {
+    try {
+        let _temp = 0;
+        var _soil = 0;
+         Log.findOne({'characteristic':'TEMP'}, {}, { sort: { 'created_at' : -1 } }, function(err, temp) {
+            _temp = temp.value;
+            Log.findOne({'characteristic':'SOIL'}, {}, { sort: { 'created_at' : -1 } }, function(err, soil) {
+                _soil = soil.value;
+                res.send({"soil":_soil,"temp":_temp})
+            })
+        })
+      } catch (error) {
+        console.error(error);
+      }
+})
 
 //main route render 
  app.get("/", (req, res) => {

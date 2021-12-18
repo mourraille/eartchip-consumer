@@ -1,18 +1,19 @@
-       <h1>Earthchip🪴</h1>
+c       <h1>Earthchip🪴</h1>          
         <div class="card">
             <div class="inner-card-title">
-                <h2>Current values</h2>
+                <div class="beacon"></div>
+                <h2 style="margin-left: 20px;">Live polling</h2>
             </div>
             <div class="inner-card">
             <div class="ellipse">
-                <div class="topic">
-                    {{{home.temp}}}&#176;
+                <div class="topic" >
+                    <div id="temp-value">{{{home.temp}}}&#176;</div>
                     <div class="topic-title">Temperature</div>
                 </div>
             </div>
             <div class="ellipse">
-                <div class="topic">
-                    {{{home.soil}}}%
+                <div class="topic" >
+                    <div id="soil-value">{{{home.soil}}}%</div>
                     <div class="topic-title">Soil Moisture</div>
                 </div>
             </div>
@@ -21,7 +22,7 @@
     </div>
             <div class="card" style="height: 400px;">
         <div class="inner-card-title">
-            <h2>Hourly temperature</h2>
+            <h2>Hourly Temperature</h2>
         </div>
         <div class="inner-card">
             <div class="chart-container" style="margin-top: 13%;">
@@ -31,7 +32,7 @@
     </div>
     <div class="card" style="height: 400px;">
         <div class="inner-card-title">
-            <h2>Hourly soil moisture</h2>
+            <h2>Hourly Soil Moisture</h2>
         </div>
         <div class="inner-card">
             <div class="chart-container" style="margin-top: 13%;">
