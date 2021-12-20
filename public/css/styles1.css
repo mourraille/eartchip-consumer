@@ -1,4 +1,5 @@
 @import url(//fonts.googleapis.com/earlyaccess/nats.css);
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans&family=Rubik:wght@500&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@500&display=swap');
 
 body {
@@ -15,12 +16,12 @@ body {
 .beacon {
     background-color: #00C02A;
     border-radius: 50%;
-    width: 10px;
-    height: 10px;
+    width: 13px;
+    height: 13px;
     animation: shine 2s ease-in-out infinite;
     position: absolute;
     margin-top: 37px;
-    margin-left: -5px ;
+    margin-left: -9px ;
   }
 
   @keyframes shine {
@@ -60,7 +61,8 @@ h1 {
     margin: 5% auto;
     text-align: center;
     justify-content: center;
-    font-family: 'NATS', sans-serif;
+    font-family: 'Josefin Sans', sans-serif;
+    font-family: 'Rubik', sans-serif;
     font-style: bold;
     font-weight: normal;
     font-size: 70px;
