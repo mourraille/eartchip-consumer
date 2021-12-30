@@ -9,7 +9,7 @@
   },
   "scripts": {
     "start": "node mqtt-consumer.js"
-  },
+    },
   "author": "mourraille",
   "license": "ISC",
   "dependencies": {

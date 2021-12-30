@@ -73,7 +73,6 @@ app.use(express.static(process.cwd() + '/public'));
  Aggregator.hourlyAggregationJob()
  Aggregator.startScheduler()
 
-
  //pulse render 
  app.get("/pulse", (req, res) => {
     try {
@@ -93,38 +92,42 @@ app.use(express.static(process.cwd() + '/public'));
 
 //main route render 
  app.get("/", (req, res) => {
-    let _temp = 0;
-    var _soil = 0;
-     Log.findOne({'characteristic':'TEMP'}, {}, { sort: { 'created_at' : -1 } }, function(err, post) {
-        _temp = post.value;
-        Log.findOne({'characteristic':'SOIL'}, {}, { sort: { 'created_at' : -1 } }, function(err, post) {
-            _soil = post.value
-            Hourly.find({characteristic: "SOIL"}).sort({hour_timestamp:-1}).limit(24).exec(function(err, posts) {
-                var soilValues = []
-                var soilDates = []
-                posts.forEach(post => {
-                    soilValues.push(post.hour_value)
-                    soilDates.push(Date.parse(post.hour_timestamp))
-                });
-                Hourly.find({characteristic: "TEMP"}).sort({hour_timestamp:-1}).limit(24).exec(function(err, temps) {
-                    var tempValues = []
-                    var tempDates = []
-                    temps.forEach(temp => {
-                        tempValues.push(temp.hour_value)
-                        tempDates.push(Date.parse(temp.hour_timestamp))
+    try {
+        let _temp = 0;
+        var _soil = 0;
+         Log.findOne({'characteristic':'TEMP'}, {}, { sort: { 'created_at' : -1 } }, function(err, post) {
+            _temp = post.value;
+            Log.findOne({'characteristic':'SOIL'}, {}, { sort: { 'created_at' : -1 } }, function(err, post) {
+                _soil = post.value
+                Hourly.find({characteristic: "SOIL"}).sort({hour_timestamp:-1}).limit(24).exec(function(err, posts) {
+                    var soilValues = []
+                    var soilDates = []
+                    posts.forEach(post => {
+                        soilValues.push(post.hour_value)
+                        soilDates.push(Date.parse(post.hour_timestamp))
                     });
-                    res.render('home', {
-                        home: { 
-                            temp: _temp,
-                            soil: _soil
-                        },
-                        soilValues,
-                        soilDates,
-                        tempValues,
-                        tempDates
-                    });
-                })
-           });
-        })
-      });
+                    Hourly.find({characteristic: "TEMP"}).sort({hour_timestamp:-1}).limit(24).exec(function(err, temps) {
+                        var tempValues = []
+                        var tempDates = []
+                        temps.forEach(temp => {
+                            tempValues.push(temp.hour_value)
+                            tempDates.push(Date.parse(temp.hour_timestamp))
+                        });
+                        res.render('home', {
+                            home: { 
+                                temp: _temp,
+                                soil: _soil
+                            },
+                            soilValues,
+                            soilDates,
+                            tempValues,
+                            tempDates
+                        });
+                    })
+               });
+            })
+          });  
+    } catch (error) {
+        
+    }
 });

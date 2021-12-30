@@ -1,7 +1,7 @@
+let url = "";
 function renderChart (arr1, arr2, name) {
     const values = arr1; 
     const dates = arr2; 
-
      var cleanDates = []
      dates.forEach(date => {
          var myDate = new Date(date);
@@ -61,7 +61,7 @@ function chartProducer(name, config) {
 
 function getPulse()
 {
-   $.get("https://earthchip.mourraille.site/pulse", function(data, status) {
+   $.get("https://" + "earthchip.mourraille.site" + "/pulse", function(data, status) {
     document.getElementById("soil-value").innerHTML = data.soil + "%"
     document.getElementById("temp-value").innerHTML = data.temp + '&#176;'
   });
