@@ -28,10 +28,10 @@ app.use(express.static(process.cwd() + '/public'));
 
 //MQTT-consumer instantiation
  var client = 
- connect(process.env.MQTT_HOST) 
+ connect(process.env.MQTT_IP) 
   client.on('connect', function () {
    client.subscribe(['INIT', 'TEMP', 'SOIL', 'HUM'], function (err) {
-       client.publish('INIT', `ACK - ${process.env.MQTT_HOST}`)
+       client.publish('INIT', `ACK - ${process.env.MQTT_IP}`)
      if (!err) {
      }
  })

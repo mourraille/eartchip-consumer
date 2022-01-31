@@ -61,7 +61,7 @@ function chartProducer(name, config) {
 
 function getPulse()
 {
-   $.get("https://" + "earthchip.mourraille.site" + "/pulse", function(data, status) {
+   $.get("https://" + "ec.mourraille.com" + "/pulse", function(data, status) {
     document.getElementById("soil-value").innerHTML = data.soil + "%"
     document.getElementById("temp-value").innerHTML = data.temp + '&#176;'
   });
