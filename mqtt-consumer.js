@@ -7,6 +7,8 @@ import Aggregator from "./aggregator.js"
 import express from "express"
 import { create } from 'express-handlebars';
 
+const TOPICS = ['INIT','SOIL','HUM','TEMP']
+
 dotenv.config()
 const app = express();
 
@@ -30,7 +32,7 @@ app.use(express.static(process.cwd() + '/public'));
  var client = 
  connect(process.env.MQTT_IP) 
   client.on('connect', function () {
-   client.subscribe(['INIT', 'TEMP', 'SOIL', 'HUM'], function (err) {
+   client.subscribe(TOPICS, function (err) {
        client.publish('INIT', `ACK - ${process.env.MQTT_IP}`)
      if (!err) {
      }
