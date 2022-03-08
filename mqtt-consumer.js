@@ -63,7 +63,6 @@ app.use(express.static(process.cwd() + '/public'));
      }
  })
 
- //Aggregator instantiation
   async function insert(payload) {
      const entry = new Log({
  		characteristic: payload.characteristic,
@@ -72,7 +71,8 @@ app.use(express.static(process.cwd() + '/public'));
  	})
  	await entry.save()
  }
- Aggregator.hourlyAggregationJob()
+ 
+ //Aggregator instantiation
  Aggregator.startScheduler()
 
  //pulse render 

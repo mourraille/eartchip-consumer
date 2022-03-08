@@ -2,8 +2,7 @@ import mongoose from 'mongoose'
 
 const schema = mongoose.Schema({
 	characteristic: String,
-	value: Number,
-	timestamp: Date,
+	value: Number
 },
 {
 	timestamps: { createdAt: 'created_at'}
