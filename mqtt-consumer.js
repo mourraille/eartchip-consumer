@@ -4,9 +4,10 @@ import mongoose from 'mongoose'
 import Log from "./models/Log.js"
 import Hourly from "./models/Hourly.js"
 import Aggregator from "./aggregator.js"
+import Classifier from "./classifier.js"
+import ValueTransformer from "./valueLanguageProcessor.js"
 import express from "express"
 import { create } from 'express-handlebars';
-
 const TOPICS = ['INIT','SOIL','HUM','TEMP']
 
 dotenv.config()
@@ -15,8 +16,9 @@ const app = express();
 const hbs = create({ extname: '.hbs', defaultLayout: "main" });
 app.engine('hbs', hbs.engine);
 app.set('view engine', 'hbs'); 
-
+app.use(express.json())
 app.use(express.static(process.cwd() + '/public'));
+
 
 //mongoose instantiation
   await mongoose
@@ -74,6 +76,7 @@ app.use(express.static(process.cwd() + '/public'));
  
  //Aggregator instantiation
  Aggregator.startScheduler()
+Classifier.classify()
 
  //pulse render 
  app.get("/pulse", (req, res) => {
@@ -92,8 +95,23 @@ app.use(express.static(process.cwd() + '/public'));
       }
 })
 
+ //AI service endpoint
+ app.post("/health", async (req, res) => {
+    try {
+        var value = 0;
+        var state = req.body.state.toUpperCase()
+        if(state.includes("GOOD")){ value = "Healthy" }
+        if(state.includes("OKAY")){ value = "Regular" }
+        if(state.includes("BAD")) { value = "Unhealthy" }
+       await Aggregator.AIAggregationJob(value)
+        res.status(204).send('Value added, thanks')
+      } catch (error) {
+        res.status(500).send('An error occured sorry')
+      }
+})
+
 //main route render 
- app.get("/", (req, res) => {
+ app.get("/", async (req, res) => {
     try {
         let _temp = 0;
         var _soil = 0;
@@ -115,10 +133,13 @@ app.use(express.static(process.cwd() + '/public'));
                             tempValues.push(temp.hour_value)
                             tempDates.push(Date.parse(temp.hour_timestamp))
                         });
+                        var text = ValueTransformer.transform(_soil,_temp)
+                        var _state =  Classifier.rate(text.tempValue,text.soilValue)
                         res.render('home', {
                             home: { 
                                 temp: _temp,
-                                soil: _soil
+                                soil: _soil,
+                                state: _state
                             },
                             soilValues,
                             soilDates,

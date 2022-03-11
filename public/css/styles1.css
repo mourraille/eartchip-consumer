@@ -5,6 +5,7 @@
 body {
         background: #172e3b;
 }
+
 .inner-card-title {
     position: relative;
     margin-top: 5%;
@@ -23,6 +24,11 @@ body {
     margin-top: 37px;
     margin-left: -9px ;
   }
+
+.state-span {
+    color:#00C02A;
+    font-size: 18px;
+}
 
   @keyframes shine {
     0%, 20% {

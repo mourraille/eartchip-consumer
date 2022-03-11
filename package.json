@@ -9,12 +9,14 @@
   },
   "scripts": {
     "start": "node mqtt-consumer.js"
-    },
+  },
   "author": "mourraille",
   "license": "ISC",
   "dependencies": {
     "agenda": "^4.2.1",
     "agendash": "^2.1.1",
+    "body-parser": "^1.19.2",
+    "dclassify": "^1.1.2",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "express-handlebars": "^6.0.2",

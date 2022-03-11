@@ -2,6 +2,9 @@ import Agenda from 'agenda'
 import Log from "./models/Log.js"
 import Hourly from "./models/Hourly.js"
 import Daily from "./models/Daily.js"
+import Health from './models/Health.js'
+import Classifier from "./classifier.js"
+import ValueTransformer from "./valueLanguageProcessor.js"
 import dotenv from 'dotenv'
 dotenv.config()
 
@@ -10,6 +13,23 @@ const agenda = new Agenda({
         address: process.env.MONGODB
     }
 });
+
+//Job creation and kickoff
+const startScheduler = async function() {
+    await agenda.start();
+    await hourlyAggregationJob();
+    await dailyAggregationJob();
+    await AITrainingJob();
+    await agenda.every("00 * * * *", "hourly");
+    await agenda.every("00 00 * * *", "daily");
+    await agenda.every("00 00 * * 1", "modelTraining");
+}
+
+const AITrainingJob = async function() {
+    agenda.define("modelTraining", async(job) => {
+        await Classifier.classify()
+    })
+}
 
 //gotta rework the logic here
 const hourlyAggregationJob = async function() {
@@ -75,26 +95,35 @@ const dailyAggregationJob = async function() {
                     }
                 }
             }]
-        ).exec();
-       const lastEntryDate = await Daily.findOne().sort({day_timestamp:-1}).exec();
+        ).sort({created_at:-1}).exec();
+       const lastEntry = await Daily.findOne().sort({day_timestamp:-1}).exec();
+       const today = new Date()
         query.forEach(hour => {
             var hourDate = new Date(hour._id.year, hour._id.month - 1, hour._id.day, 0, 0, 0, 0)
-            if (hourDate > lastEntryDate) {
+            if (lastEntry.day_timestamp <= hourDate && hourDate < new Date(today.getFullYear(),today.getMonth(),today.getDate(),0,0,0,0)) {
                 dailyAggregation(hour._id.characteristic, hourDate, hour.avgQuantity, hour.count)    
             }
         });
-        //await Hourly.collection.drop();
-    });
+   });
 }
 
-//Job creation and kickoff
-const startScheduler = async function() {
-    await agenda.start();
-    await hourlyAggregationJob();
-    await dailyAggregationJob();
-    await agenda.every("00 * * * *", "hourly");
-    await agenda.every("53 * * * *", "daily");
+
+const AIAggregationJob = async function(state) {
+    const lastWeek = await Daily.find().sort({day_timestamp:-1}).limit(10).exec();
+    var soilValue = 0;
+    var tempValue = 0;
+       lastWeek.forEach(day => {
+        if (day.characteristic == "SOIL") {
+            soilValue += day.day_value
+        }
+        if(day.characteristic == "TEMP") {
+            tempValue += day.day_value
+        }
+       });
+        var text = ValueTransformer.transform(soilValue/5,tempValue/5)
+        AIAggregation((text.tempValue),(text.soilValue), state)
 }
+
 
 async function hourlyAggregation(characteristic, date, avg, count) {
     var entry = new Hourly({
@@ -113,12 +142,23 @@ async function dailyAggregation(characteristic, date, avg, count) {
         day_timestamp: date,
         hour_count: count
     })
-    console.log(entry)
     entry.save()
 }
+
+async function AIAggregation(tempValue, soilValue, state) {
+    var entry = new Health({
+        temp: tempValue,
+        soil: soilValue,
+        state: state
+    })
+    entry.save()
+}
+
+
 
 export default {
     dailyAggregationJob,
     hourlyAggregationJob,
+    AIAggregationJob,
     startScheduler
 }
