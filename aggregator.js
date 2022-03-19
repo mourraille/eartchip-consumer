@@ -95,13 +95,14 @@ const dailyAggregationJob = async function() {
                     }
                 }
             }]
-        ).sort({created_at:-1}).exec();
-       const lastEntry = await Daily.findOne().sort({day_timestamp:-1}).exec();
-       const today = new Date()
+        ).sort({created_at:-1}).exec(); //18 00.00 - 18 00.00  - 19 0.00
+       const lastEntry = await Daily.findOne().sort({day_timestamp:-1}).exec(); // 19 00 00 
+       const today = new Date() // 20 00 00
         query.forEach(hour => {
-            var hourDate = new Date(hour._id.year, hour._id.month - 1, hour._id.day, 0, 0, 0, 0)
-            if (lastEntry.day_timestamp <= hourDate && hourDate < new Date(today.getFullYear(),today.getMonth(),today.getDate(),0,0,0,0)) {
-                dailyAggregation(hour._id.characteristic, hourDate, hour.avgQuantity, hour.count)    
+            var hourDate = new Date(hour._id.year, hour._id.month - 1, hour._id.day, 0, 0, 0, 0) //19 00 00
+            if (lastEntry.day_timestamp <= hourDate && 
+                hourDate < new Date(today.getFullYear(),today.getMonth(),today.getDate(),0,0,0,0)) {
+                dailyAggregation(hour._id.characteristic, today, hour.avgQuantity, hour.count)    
             }
         });
    });
@@ -153,8 +154,6 @@ async function AIAggregation(tempValue, soilValue, state) {
     })
     entry.save()
 }
-
-
 
 export default {
     dailyAggregationJob,

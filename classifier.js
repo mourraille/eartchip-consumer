@@ -44,7 +44,6 @@ const rate =  function(temp, soil) {
      return result1.category
     }
 
-
 export default {
  classify,
  rate
